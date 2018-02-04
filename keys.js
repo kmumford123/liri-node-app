@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 console.log('this is loaded');
 
 exports.twitter = {
