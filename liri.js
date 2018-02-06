@@ -69,14 +69,14 @@ inquirer.prompt([{
                     }
 
                     var movieResults = require("./movies.js")
-                    console.log(movieResults[key])
                     for (var key in movieResults) {
                         if (key === 'Title' ||
                             key === 'Year' ||
                             key === 'Language' ||
                             key === 'Plot' ||
                             key === 'Actors') {
-                            console.log(movieResults[key]);
+                            var finalResult = movieResults[key].split(",")
+                            console.log(finalResult[0]);
                         }
                         if (key === 'Ratings') {
                             console.log(movieResults[key][0]);
