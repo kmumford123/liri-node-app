@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kmumford123/liri-node-app#readme",
   "dependencies": {
     "dotenv": "^5.0.0",
+    "imdb-api": "^3.1.2",
     "inquirer": "^5.0.1",
     "node-spotify-api": "^1.0.7",
     "omdb": "^0.8.0",

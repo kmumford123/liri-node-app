@@ -4,13 +4,13 @@ var keys = require("./keys.js");
 var Spotify = require("node-spotify-api");
 var inquirer = require("inquirer");
 var Twitter = require("twitter");
-// var omdbApi = require('omdb-client');
+var imdb = require('imdb-api');
 
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
-// var omdbKey = new Omdb(keys.omdb);
+// var ImdbApi = new ImdbApi(keys.imdb);
 
-// console.log(keys.Omdb)
+// console.log(keys.imdb)
 
 inquirer.prompt([{
     type: "list",
@@ -61,25 +61,52 @@ inquirer.prompt([{
         }]).then(function(watch) {
             request(`http://www.omdbapi.com/?t=${watch.movie}&y=&plot=short&apikey=trilogy`, function(error, response, body) {
 
-                // If the request is successful (i.e. if the response status code is 200)
-                if (!error && response.statusCode === 200) {
-                    var array1 = [];
-                    var responsestring = JSON.stringify(body.Title);
+                const fs = require('fs');
 
-                    responsestring.push(array1);
-                    // Parse the body of the site and recover just the imdbRating
-                    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-                    console.log(`                Title: ${responsestring}`);
-                    console.log(array);
-                    // Released: ${body.Year}
-                    // IMDB Rating: ${body.imdbRating}
-                    // Rotten Tomatoes Rating: ${body.Ratings}
-                    // Location: ${body.Country}
-                    // Language: ${body.Language}
-                    // Plot: ${body.Plot}
-                    // Cast:  ${body.Actors} `);
-                }
+                fs.writeFile('./movies.js', `var shows = ${body}; module.exports = shows;`, err => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    var movieResults = require("./movies.js")
+                    console.log(movieResults[key])
+                    for (var key in movieResults) {
+                        if (key === 'Title' ||
+                            key === 'Year' ||
+                            key === 'Language' ||
+                            key === 'Plot' ||
+                            key === 'Actors') {
+                            console.log(movieResults[key]);
+                        }
+                        if (key === 'Ratings') {
+                            console.log(movieResults[key][0]);
+                            console.log(movieResults[key][1]);
+                        }
+                        if (key === 'Country') {
+                            var finalResult = movieResults[key].split(",")
+                            console.log(finalResult[0]);
+                        }
+                    };
+                });
             });
+        });
+    } else if (user.entertainment === "do-what-it-says") {
+        var fs = require("fs");
+
+        fs.readFile("random.txt", "utf8", function(error, data) {
+
+            if (error) {
+                return console.log(error);
+            }
+
+            console.log("node liri.js");
+
+            // Then split it by commas (to make it more readable)
+            var dataArr = data.split(",");
+
+            // We will then re-display the content as an array for later use.
+            console.log(dataArr);
+
         });
     }
 });
