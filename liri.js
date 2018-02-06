@@ -15,8 +15,8 @@ var client = new Twitter(keys.twitter);
 inquirer.prompt([{
     type: "list",
     name: "entertainment",
-    message: "You gonna Tweet, Listen, or Watch?",
-    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"]
+    message: "You gonna Tweet, Listen, Watch or Let me do what AIs do?",
+    choices: ["my-tweets", "spotify-this-song", "movie-this", "AI select"]
 }]).then(function(user) {
 
     var params = { screen_name: 'mumpdiggity' };
@@ -24,7 +24,7 @@ inquirer.prompt([{
         client.get('statuses/user_timeline', params, function(error, tweets, response) {
             if (!error) {
                 var parsedTweets = [];
-                for (i = 0; i < 1; i++) {
+                for (i = 0; i < 3; i++) {
                     parsedTweets.push(JSON.stringify(tweets[i].text));
                 }
                 console.log(parsedTweets);
@@ -42,7 +42,7 @@ inquirer.prompt([{
                 if (err) {
                     return console.log('Error occurred: ' + err);
                 }
-                if (song.length < 1) {
+                if (listen.song.length < 1) {
                     return console.log('No songs were found!');
                 }
                 var results = data.tracks.items[0];
@@ -90,25 +90,29 @@ inquirer.prompt([{
                 });
             });
         });
-    } else if (user.entertainment === "do-what-it-says") {
+    } else if (user.entertainment === "AI select") {
         var fs = require("fs");
 
-        fs.readFile("random.txt", "utf8", function(error, data) {
+        fs.readFile("random.txt", "utf8", function(error, songData) {
 
             if (error) {
                 return console.log(error);
             }
-
-            console.log("node liri.js");
-
-            // Then split it by commas (to make it more readable)
-            var dataArr = data.split(",");
-
-            // We will then re-display the content as an array for later use.
-            console.log(dataArr);
-
+            var dataArr = songData.split(",");
+            spotify.search({ type: 'track', query: dataArr[1], limit: 1, client }, function(err, data) {
+                if (err) {
+                    return console.log('Error occurred: ' + err);
+                }
+                if (songData.length < 1) {
+                    return console.log('No songs were found!');
+                }
+                var results = data.tracks.items[0];
+                console.log(`                Artist: ${results.album.artists[0].name}
+                Song: ${data.tracks.items[0].name}
+                Link: ${data.tracks.items[0].preview_url}
+                Album: ${results.album.name} `);
+            });
         });
+
     }
 });
-
-// });
